@@ -19,8 +19,8 @@ def overlay_image_heatmaps(gray_im,
         gray_im (2D numpy array in [0, 1]): grayscale 2D image, [0, 1]
         heatmap_im (2d numpy array): heatmap image, can be any real number.
         perc (list, optional): weights of image. Need not add up to 1. Defaults to [0.2, 0.8]. 
-        cmap (cmap function, optional): colormap function, such as those returned by matplotlib.cm.get_cmap() 
-            Defaults to None, which will lead to RdBu (red-blue) colormap
+        cmap (cmap function, optional): colormap function, such as those returned by 
+            matplotlib.cm.get_cmap(). Defaults to None, which will lead to RdBu (red-blue) colormap
         min_clip (float, optional): smallest number to show on heatmap
             lower than min_clip will be clipped to min_clip. Defaults to None
         max_clip (float, optional): largest number to show on heatmap
