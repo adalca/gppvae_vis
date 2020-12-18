@@ -6,12 +6,37 @@ import numpy as np
 
 def overlay_image_heatmaps(gray_im,
                            heatmap_im,
-                           perc=[0.5, 0.5], 
+                           perc=[0.2, 0.8], 
                            cmap=None,
                            min_clip=None,
                            max_clip=None,
                            min_show=None,
                            max_show=None):
+    """
+    Compute an image overlapping between the gray_im (2D) and heatmap_im (2D)
+
+    Args:
+        gray_im ([type]): grayscale 2D image, [0, 1]
+        heatmap_im ([type]): heatmap image, can be any real number.
+        perc (list, optional): weights of image. Need not add up to 1. Defaults to [0.2, 0.8]. 
+        cmap ([type], optional): colormap function, such as those returned by matplotlib.cm.get_cmap() 
+            Defaults to None, which will lead to RdBu (red-blue) colormap
+        min_clip ([type], optional): smallest number to show on heatmap
+            lower than min_clip will be clipped to min_clip. Defaults to None
+        max_clip ([type], optional): largest number to show on heatmap
+            higher than max_clip will be clipped to max_clip. Defaults to None
+        min_show ([type], optional): the minimum values to show from center
+            higher values than min_show will be 0'ed. Defaults to None.
+        max_show ([type], optional): the maximum values to show from center
+            lower values than min_show will be 0'ed. Defaults to None.
+
+    Returns:
+        [type]: [description]
+    """
+
+    # some input checking
+    assert gray_im.ndim == 2, '2D images only, found: {}'.format(gray_im.ndim)
+    assert heatmap_im.ndim == 2, '2D images only, found: {}'.format(heatmap_im.ndim)
 
     # prepare colormap
     if cmap is None:
@@ -49,8 +74,21 @@ def overlay_image_heatmaps(gray_im,
 
 def overlay_image_heatmaps_grid(gray_images,
                                 heatmap_images,
-                                grid=None,
+                                grid=True,
                                 **kwargs):
+    """ 
+    Compute a mosaid/grid of overlay images
+
+    Args:
+        gray_images ([type]): list of 2D grayscale images
+        heatmap_images ([type]): list of 2D heatmaps 
+        grid ([type], optional): boolean (whether to have grid) or [row, col] for grid dimensions.
+            Defaults to True.
+
+    Returns:
+        [type]: [description]
+    """
+
     nb_plots = len(gray_images)
 
     # figure out the number of rows and columns (code taken from ne.plot.slices)
