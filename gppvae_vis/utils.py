@@ -16,27 +16,29 @@ def overlay_image_heatmaps(gray_im,
     Compute an image overlapping between the gray_im (2D) and heatmap_im (2D)
 
     Args:
-        gray_im ([type]): grayscale 2D image, [0, 1]
-        heatmap_im ([type]): heatmap image, can be any real number.
+        gray_im (2D numpy array in [0, 1]): grayscale 2D image, [0, 1]
+        heatmap_im (2d numpy array): heatmap image, can be any real number.
         perc (list, optional): weights of image. Need not add up to 1. Defaults to [0.2, 0.8]. 
-        cmap ([type], optional): colormap function, such as those returned by matplotlib.cm.get_cmap() 
+        cmap (cmap function, optional): colormap function, such as those returned by matplotlib.cm.get_cmap() 
             Defaults to None, which will lead to RdBu (red-blue) colormap
-        min_clip ([type], optional): smallest number to show on heatmap
+        min_clip (float, optional): smallest number to show on heatmap
             lower than min_clip will be clipped to min_clip. Defaults to None
-        max_clip ([type], optional): largest number to show on heatmap
+        max_clip (float, optional): largest number to show on heatmap
             higher than max_clip will be clipped to max_clip. Defaults to None
-        min_show ([type], optional): the minimum values to show from center
+        min_show (float, optional): the minimum values to show from center
             higher values than min_show will be 0'ed. Defaults to None.
-        max_show ([type], optional): the maximum values to show from center
+        max_show (float, optional): the maximum values to show from center
             lower values than min_show will be 0'ed. Defaults to None.
 
     Returns:
-        [type]: [description]
+        RGB numpy array: overlay of image and heatmap
     """
 
     # some input checking
     assert gray_im.ndim == 2, '2D images only, found: {}'.format(gray_im.ndim)
     assert heatmap_im.ndim == 2, '2D images only, found: {}'.format(heatmap_im.ndim)
+    assert gray_im.min() >= 0, 'grayscale image should be in [0,1]'
+    assert gray_im.max() <= 1, 'grayscale image should be in [0,1]'
 
     # prepare colormap
     if cmap is None:
@@ -80,13 +82,13 @@ def overlay_image_heatmaps_grid(gray_images,
     Compute a mosaid/grid of overlay images
 
     Args:
-        gray_images ([type]): list of 2D grayscale images
-        heatmap_images ([type]): list of 2D heatmaps 
-        grid ([type], optional): boolean (whether to have grid) or [row, col] for grid dimensions.
-            Defaults to True.
+        gray_images (list of 2D numpy arrays in [0, 1]): list of 2D grayscale images
+        heatmap_images (list of 2d numpy arrrays): list of 2D heatmaps 
+        grid (bool/2-element-list, optional): boolean (whether to have grid) or [row, col] 
+            for grid dimensions. Defaults to True.
 
     Returns:
-        [type]: [description]
+        RGB numpy array: mosaic of overlay of images and heatmaps (one *large* numpy array)
     """
 
     nb_plots = len(gray_images)
