@@ -2,7 +2,63 @@
 # third party
 import matplotlib
 import numpy as np
+import pystrum as pm
 
+
+def make_mosaic(imgs, rows, cols):
+  i = 0
+  mosaic = []
+  for ir in range(rows):
+    row = []
+    for ic in range(cols):
+      if i>=len(imgs):
+        row.append(np.zeros_like(imgs[0]))
+      else:
+        row.append(imgs[i])
+      i = i+1
+    row = np.concatenate(row, 1)
+    mosaic.append(row)
+  mosaic = np.concatenate(mosaic, 0)
+  return mosaic
+
+
+
+def seg_overlap_rgb(vol, seg, do_contour=True, do_rgb=True, cmap=None, thickness=1.0):
+    '''
+    overlap a nd volume and nd segmentation (label map)
+    do_contour should be None, boolean, or contour_type from seg2contour
+    not well tested yet.
+    '''
+
+    # compute contours for each label if necessary
+    if do_contour is not None and do_contour is not False:
+        if not isinstance(do_contour, str):
+            do_contour = 'inner'
+        seg = pm.pynd.segutils.seg2contour(seg, contour_type=do_contour, thickness=thickness)
+
+    # compute a rgb-contour map
+    if do_rgb:
+        if cmap is None:
+            nb_labels = np.max(seg).astype(int) + 1
+            colors = np.random.random((nb_labels, 3)) * 0.5 + 0.5
+            colors[0, :] = [0, 0, 0]
+        else:
+            colors = cmap[:, 0:3]
+
+        olap = colors[seg.flat, :]
+        sf = seg.flat == 0
+        for d in range(3):
+          vd = vol[..., d]
+          olap[sf, d] = vd.flat[sf]
+        olap = np.reshape(olap, vol.shape)
+
+    else:
+        olap = seg
+        olap[seg == 0] = vol[seg == 0]
+
+    return olap
+
+  
 
 def overlay_image_heatmaps(gray_im,
                            heatmap_im,
